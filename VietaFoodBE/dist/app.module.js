@@ -10,6 +10,7 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
+const DependencyInjection_1 = require("./DI/DependencyInjection");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,6 +30,7 @@ exports.AppModule = AppModule = __decorate([
                     encrypt: false,
                 },
             }),
+            DependencyInjection_1.DependencyInjectionModule
         ],
     })
 ], AppModule);

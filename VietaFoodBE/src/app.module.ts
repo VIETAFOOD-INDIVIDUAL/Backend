@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { AutoMapperModule } from './Tool/AutoMapper';
+import { DependencyInjectionModule } from './DI/DependencyInjection';
 
 @Module({
   imports: [
@@ -18,6 +18,7 @@ import { AutoMapperModule } from './Tool/AutoMapper';
         encrypt: false,
       },
     }),
+    DependencyInjectionModule
   ],
 })
 export class AppModule {}

@@ -6,23 +6,22 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DependencyInjectionModule = void 0;
+exports.DIRepository = void 0;
 const common_1 = require("@nestjs/common");
-const AutoMapper_1 = require("../Tool/AutoMapper");
-const DIController_1 = require("./DIController");
-let DependencyInjectionModule = class DependencyInjectionModule {
+const ProductRepository_1 = require("../Repositories/Repository/ProductRepository");
+let DIRepository = class DIRepository {
 };
-exports.DependencyInjectionModule = DependencyInjectionModule;
-exports.DependencyInjectionModule = DependencyInjectionModule = __decorate([
+exports.DIRepository = DIRepository;
+exports.DIRepository = DIRepository = __decorate([
     (0, common_1.Module)({
-        imports: [
-            AutoMapper_1.AutoMapperModule,
-            DIController_1.DIController
+        providers: [
+            {
+                provide: "IProductRepository",
+                useClass: ProductRepository_1.ProductRepository,
+                scope: common_1.Scope.REQUEST
+            }
         ],
-        exports: [
-            AutoMapper_1.AutoMapperModule,
-            DIController_1.DIController
-        ],
+        exports: ['IProductRepository'],
     })
-], DependencyInjectionModule);
-//# sourceMappingURL=DependencyInjection.js.map
+], DIRepository);
+//# sourceMappingURL=DIRepository.js.map
