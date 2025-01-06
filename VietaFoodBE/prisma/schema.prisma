@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  adminKey String   @id(map: "PK__Admin__586B4031F438AA59") @db.VarChar(255)
+  fullName String   @db.NVarChar(255)
+  email    String   @db.NVarChar(255)
+  password String   @db.NVarChar(255)
+  Coupon   Coupon[]
+}
+
+model Coupon {
+  couponKey          String   @id(map: "PK__Coupon__592794AC94BB37FA") @db.VarChar(255)
+  couponCode         String?  @unique(map: "UQ__Coupon__1D19F4DA509A2899") @db.VarChar(255)
+  description        String   @db.NVarChar(255)
+  discountPercentage Float
+  numOfUses          Int
+  expiredDate        DateTime @db.DateTime
+  createdBy          String   @db.VarChar(255)
+  createdDate        DateTime @db.DateTime
+  status             Int      @db.TinyInt
+  Admin              Admin    @relation(fields: [createdBy], references: [adminKey], onUpdate: NoAction, map: "FK__Coupon__createdB__29572725")
+  Order              Order[]
+}
+
+model CustomerInformation {
+  customerInfoKey String  @id(map: "PK__Customer__B949C15FE012C661") @db.VarChar(255)
+  name            String  @db.NVarChar(255)
+  email           String? @db.NVarChar(255)
+  address         String  @db.NVarChar(255)
+  phone           String  @db.NVarChar(20)
+  Order           Order[]
+}
+
+model Order {
+  orderKey            String               @id(map: "PK__Order__594FCFFB5F2B7ED4") @db.VarChar(255)
+  customerInfoKey     String?              @db.VarChar(255)
+  couponKey           String?              @db.VarChar(255)
+  createdAt           DateTime             @db.DateTime
+  totalPrice          Decimal              @db.Decimal(10, 2)
+  status              Int                  @db.TinyInt
+  imgUrl              String?              @db.NVarChar(255)
+  Coupon              Coupon?              @relation(fields: [couponKey], references: [couponKey], onDelete: NoAction, onUpdate: NoAction, map: "FK__Order__couponKey__2F10007B")
+  CustomerInformation CustomerInformation? @relation(fields: [customerInfoKey], references: [customerInfoKey], onDelete: NoAction, onUpdate: NoAction, map: "FK__Order__customerI__2E1BDC42")
+  OrderDetail         OrderDetail[]
+}
+
+model OrderDetail {
+  orderDetailKey String   @id(map: "PK__OrderDet__34730B90719965DF") @db.VarChar(255)
+  productKey     String?  @db.VarChar(255)
+  orderKey       String?  @db.VarChar(255)
+  quantity       Int?
+  actualPrice    Float
+  Order          Order?   @relation(fields: [orderKey], references: [orderKey], onDelete: NoAction, onUpdate: NoAction, map: "FK__OrderDeta__order__32E0915F")
+  Product        Product? @relation(fields: [productKey], references: [productKey], onDelete: NoAction, onUpdate: NoAction, map: "FK__OrderDeta__produ__31EC6D26")
+}
+
+model Product {
+  productKey   String        @id(map: "PK__Product__1E79644A47BB427A") @db.VarChar(255)
+  name         String        @db.NVarChar(255)
+  description  String        @db.NVarChar(255)
+  guildToUsing String        @db.NVarChar(255)
+  weight       String        @db.NVarChar(20)
+  expiryDay    String        @db.NVarChar(50)
+  price        Float
+  imageURL     String        @db.NVarChar(255)
+  quantity     Int
+  status       Int           @db.TinyInt
+  OrderDetail  OrderDetail[]
+}
+
+model sysdiagrams {
+  name         String @db.NVarChar(128)
+  principal_id Int
+  diagram_id   Int    @id(map: "PK__sysdiagr__C2B05B61E9776B72") @default(autoincrement())
+  version      Int?
+  definition   Bytes?
+
+  @@unique([principal_id, name], map: "UK_principal_name")
+}
