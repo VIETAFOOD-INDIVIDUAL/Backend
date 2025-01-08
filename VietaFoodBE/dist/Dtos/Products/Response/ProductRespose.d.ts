@@ -1,4 +1,5 @@
 export declare class ProductResponse {
+    productKey: string;
     name: string;
     description: string;
     guildToUsing: string;

@@ -14,6 +14,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductController = void 0;
 const common_1 = require("@nestjs/common");
+const CustomException_1 = require("../Base/Utils/CustomException");
+const CustomException_2 = require("../Base/Utils/CustomException");
+const ProductRequest_1 = require("../Dtos/Products/Request/ProductRequest");
+const DataReponse_1 = require("../Base/Common/DataReponse");
 let ProductController = class ProductController {
     constructor(productService) {
         this.productService = productService;
@@ -22,10 +26,43 @@ let ProductController = class ProductController {
     async getAllProduct() {
         try {
             var response = await this.productService.getAllProduct();
-            return response;
+            return new DataReponse_1.DataResponse(200, "Đã tải dữ liệu thành công", response);
         }
         catch (error) {
-            throw new common_1.NotFoundException(error);
+            if (error instanceof CustomException_1.DataNotFoundException) {
+                throw new common_1.NotFoundException(error.message);
+            }
+            else if (error instanceof CustomException_2.InternalServerErrorException) {
+                throw new common_1.NotFoundException(error.message);
+            }
+        }
+    }
+    async createProduct(request) {
+        try {
+            var response = await this.productService.createProduct(request);
+            return new DataReponse_1.DataResponse(200, "Đã tạo thành công", response);
+        }
+        catch (error) {
+            if (error instanceof CustomException_1.DataNotFoundException) {
+                throw new common_1.NotFoundException(error.message);
+            }
+            else if (error instanceof CustomException_2.InternalServerErrorException) {
+                throw new common_1.NotFoundException(error.message);
+            }
+        }
+    }
+    async getOneProduct(key) {
+        try {
+            var response = await this.productService.getOneProduct(key);
+            return new DataReponse_1.DataResponse(200, "Đã tải dữ liệu thành công", response);
+        }
+        catch (error) {
+            if (error instanceof CustomException_1.DataNotFoundException) {
+                throw new common_1.NotFoundException(error.message);
+            }
+            else if (error instanceof CustomException_2.InternalServerErrorException) {
+                throw new common_1.NotFoundException(error.message);
+            }
         }
     }
 };
@@ -36,8 +73,22 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getAllProduct", null);
+__decorate([
+    (0, common_1.Post)('create-product'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [ProductRequest_1.ProductRequest]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "createProduct", null);
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('key')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "getOneProduct", null);
 exports.ProductController = ProductController = __decorate([
-    (0, common_1.Controller)('Product'),
+    (0, common_1.Controller)('product'),
     __param(0, (0, common_1.Inject)("IProductService")),
     __metadata("design:paramtypes", [Object])
 ], ProductController);

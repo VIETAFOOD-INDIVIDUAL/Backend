@@ -15,23 +15,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductService = void 0;
 const common_1 = require("@nestjs/common");
 const nestjs_1 = require("@automapper/nestjs");
+const CustomException_1 = require("../../Base/Utils/CustomException");
+const CustomException_2 = require("../../Base/Utils/CustomException");
 let ProductService = class ProductService {
     constructor(productRepo, mapper) {
         this.productRepo = productRepo;
         this.mapper = mapper;
     }
-    async getAllProduct() {
+    async getOneProduct(key) {
+        const getOneProduct = await this.productRepo.getOneProduct(key);
+        if (getOneProduct === null) {
+            throw new CustomException_1.DataNotFoundException("Không tìm thấy sản phẩm !");
+        }
+        return getOneProduct;
+    }
+    async createProduct(request) {
         try {
-            const getAllProduct = await this.productRepo.getAllProduct();
-            console.log("product", getAllProduct);
-            if (getAllProduct.length === 0) {
-                throw new common_1.NotFoundException("Khong tim thay product");
-            }
-            return getAllProduct;
+            const createProduct = await this.productRepo.createProduct(request);
+            const response = {
+                ...createProduct
+            };
+            return response;
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException("Loi he thong !");
+            throw new CustomException_2.InternalServerErrorException(error.message);
         }
+    }
+    async getAllProduct() {
+        const getAllProduct = await this.productRepo.getAllProduct();
+        if (getAllProduct.length === 0) {
+            throw new CustomException_1.DataNotFoundException("Không tìm thấy sản phẩm !");
+        }
+        return getAllProduct;
     }
 };
 exports.ProductService = ProductService;

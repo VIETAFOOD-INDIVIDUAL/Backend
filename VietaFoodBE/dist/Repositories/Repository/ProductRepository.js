@@ -12,9 +12,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductRepository = void 0;
 const client_1 = require("@prisma/client");
 const common_1 = require("@nestjs/common");
+const CustomException_1 = require("../../Base/Utils/CustomException");
+const uuid_1 = require("uuid");
 let ProductRepository = class ProductRepository {
     constructor() {
         this.prisma = new client_1.PrismaClient();
+    }
+    async getOneProduct(key) {
+        try {
+            var getAllProduct = await this.prisma.product.findFirst({ where: { productKey: key } });
+            return getAllProduct;
+        }
+        catch (error) {
+            throw new CustomException_1.InternalServerErrorException("Loi he thong !");
+        }
+    }
+    async createProduct(request) {
+        try {
+            const creProduct = await this.prisma.product.create({
+                data: {
+                    name: request.name,
+                    description: request.description,
+                    expiryDay: request.expiryDay,
+                    guildToUsing: request.guildToUsing,
+                    imageURL: request.imageURL,
+                    price: request.price,
+                    quantity: request.quantity,
+                    weight: request.weight,
+                    productKey: `PRO_${(0, uuid_1.v4)()}`,
+                    status: 1
+                }
+            });
+            return creProduct;
+        }
+        catch (error) {
+            throw new CustomException_1.InternalServerErrorException(error.message);
+        }
     }
     async getAllProduct() {
         try {
@@ -22,7 +55,7 @@ let ProductRepository = class ProductRepository {
             return getAllProduct;
         }
         catch (error) {
-            throw new Error("Loi he thong !");
+            throw new CustomException_1.InternalServerErrorException("Loi he thong !");
         }
     }
 };
