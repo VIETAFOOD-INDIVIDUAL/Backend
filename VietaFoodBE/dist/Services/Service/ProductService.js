@@ -14,20 +14,41 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductService = void 0;
 const common_1 = require("@nestjs/common");
-const nestjs_1 = require("@automapper/nestjs");
 const CustomException_1 = require("../../Base/Utils/CustomException");
 const CustomException_2 = require("../../Base/Utils/CustomException");
 let ProductService = class ProductService {
-    constructor(productRepo, mapper) {
+    constructor(productRepo) {
         this.productRepo = productRepo;
-        this.mapper = mapper;
+        this.productRepo = productRepo;
+    }
+    async deleteProduct(key) {
+        await this.productRepo.deleteProduct(key);
+    }
+    async updateProduct(key, request) {
+        try {
+            const existingProduct = await this.productRepo.getOneProduct(key);
+            if (!existingProduct) {
+                throw new CustomException_1.DataNotFoundException("Không tìm thấy sản phẩm !");
+            }
+            const updatedProduct = await this.productRepo.updateProduct(key, request);
+            const response = {
+                ...updatedProduct
+            };
+            return response;
+        }
+        catch (error) {
+            throw new CustomException_2.InternalServerErrorException(error.message);
+        }
     }
     async getOneProduct(key) {
         const getOneProduct = await this.productRepo.getOneProduct(key);
         if (getOneProduct === null) {
             throw new CustomException_1.DataNotFoundException("Không tìm thấy sản phẩm !");
         }
-        return getOneProduct;
+        const response = {
+            ...getOneProduct
+        };
+        return response;
     }
     async createProduct(request) {
         try {
@@ -46,14 +67,16 @@ let ProductService = class ProductService {
         if (getAllProduct.length === 0) {
             throw new CustomException_1.DataNotFoundException("Không tìm thấy sản phẩm !");
         }
-        return getAllProduct;
+        const response = {
+            ...getAllProduct
+        };
+        return response;
     }
 };
 exports.ProductService = ProductService;
 exports.ProductService = ProductService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('IProductRepository')),
-    __param(1, (0, nestjs_1.InjectMapper)()),
-    __metadata("design:paramtypes", [Object, Object])
+    __metadata("design:paramtypes", [Object])
 ], ProductService);
 //# sourceMappingURL=ProductService.js.map

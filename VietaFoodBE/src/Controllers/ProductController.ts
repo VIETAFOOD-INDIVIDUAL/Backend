@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, NotFoundException, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Inject, NotFoundException, Param, Patch, Post, Put, Query } from "@nestjs/common";
 import { ProductResponse } from "src/Dtos/Products/Response/ProductRespose";
 import { IProductService } from "src/Services/IService/IProductService";
 import { DataNotFoundException } from "src/Base/Utils/CustomException";
@@ -48,6 +48,34 @@ export class ProductController {
         try {
             var response = await this.productService.getOneProduct(key)
             return new DataResponse (200, "Đã tải dữ liệu thành công", response);
+        } catch (error) {
+            if(error instanceof DataNotFoundException) {
+                throw new NotFoundException(error.message)
+            }else if(error instanceof InternalServerErrorException) {
+                throw new NotFoundException(error.message)
+            }
+        }
+    }
+
+    @Put('update-product/:key')
+    async updateProduct(@Param('key') key: string, @Body() request: ProductRequest) : Promise<DataResponse<any>> {
+        try {
+            var response = await this.productService.updateProduct(key, request)
+            return new DataResponse (200, "Đã cập nhật thành công", response);
+        } catch (error) {
+            if(error instanceof DataNotFoundException) {
+                throw new NotFoundException(error.message)
+            }else if(error instanceof InternalServerErrorException) {
+                throw new NotFoundException(error.message)
+            }
+        }
+    }
+
+    @Patch('delete-product/:key')
+    async deleteProduct(@Param('key') key: string) : Promise<DataResponse<any>> {
+        try {
+            var response = await this.productService.deleteProduct(key)
+            return new DataResponse (200, "Đã cập nhật thành công", response);
         } catch (error) {
             if(error instanceof DataNotFoundException) {
                 throw new NotFoundException(error.message)

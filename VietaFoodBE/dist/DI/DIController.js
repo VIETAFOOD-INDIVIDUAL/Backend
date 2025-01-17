@@ -10,6 +10,7 @@ exports.DIController = void 0;
 const common_1 = require("@nestjs/common");
 const ProductController_1 = require("../Controllers/ProductController");
 const DIService_1 = require("./DIService");
+const OrderController_1 = require("../Controllers/OrderController");
 let DIController = class DIController {
 };
 exports.DIController = DIController;
@@ -17,7 +18,8 @@ exports.DIController = DIController = __decorate([
     (0, common_1.Module)({
         imports: [DIService_1.DIService],
         controllers: [
-            ProductController_1.ProductController
+            ProductController_1.ProductController,
+            OrderController_1.OrderController
         ]
     })
 ], DIController);

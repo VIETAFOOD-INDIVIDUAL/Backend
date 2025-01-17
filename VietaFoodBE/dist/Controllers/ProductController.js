@@ -65,6 +65,34 @@ let ProductController = class ProductController {
             }
         }
     }
+    async updateProduct(key, request) {
+        try {
+            var response = await this.productService.updateProduct(key, request);
+            return new DataReponse_1.DataResponse(200, "Đã cập nhật thành công", response);
+        }
+        catch (error) {
+            if (error instanceof CustomException_1.DataNotFoundException) {
+                throw new common_1.NotFoundException(error.message);
+            }
+            else if (error instanceof CustomException_2.InternalServerErrorException) {
+                throw new common_1.NotFoundException(error.message);
+            }
+        }
+    }
+    async deleteProduct(key) {
+        try {
+            var response = await this.productService.deleteProduct(key);
+            return new DataReponse_1.DataResponse(200, "Đã cập nhật thành công", response);
+        }
+        catch (error) {
+            if (error instanceof CustomException_1.DataNotFoundException) {
+                throw new common_1.NotFoundException(error.message);
+            }
+            else if (error instanceof CustomException_2.InternalServerErrorException) {
+                throw new common_1.NotFoundException(error.message);
+            }
+        }
+    }
 };
 exports.ProductController = ProductController;
 __decorate([
@@ -87,6 +115,21 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getOneProduct", null);
+__decorate([
+    (0, common_1.Put)('update-product/:key'),
+    __param(0, (0, common_1.Param)('key')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, ProductRequest_1.ProductRequest]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "updateProduct", null);
+__decorate([
+    (0, common_1.Patch)('delete-product/:key'),
+    __param(0, (0, common_1.Param)('key')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "deleteProduct", null);
 exports.ProductController = ProductController = __decorate([
     (0, common_1.Controller)('product'),
     __param(0, (0, common_1.Inject)("IProductService")),

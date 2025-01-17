@@ -18,12 +18,48 @@ let ProductRepository = class ProductRepository {
     constructor() {
         this.prisma = new client_1.PrismaClient();
     }
+    async deleteProduct(key) {
+        try {
+            const isExist = await this.getOneProduct(key).then((res) => res.status === 1);
+            if (!isExist) {
+                throw new CustomException_1.DataNotFoundException("Không tìm thấy sản phẩm !");
+            }
+            await this.prisma.product.update({ where: { productKey: key }, data: { status: 2 } });
+        }
+        catch (error) {
+            if (error instanceof CustomException_1.DataNotFoundException) {
+                throw new CustomException_1.DataNotFoundException(error.message);
+            }
+            throw new CustomException_1.InternalServerErrorException(error.message);
+        }
+    }
+    async updateProduct(key, request) {
+        const isExist = this.getOneProduct(key);
+        if (isExist === null) {
+            throw new CustomException_1.InternalServerErrorException("Không tìm thấy sản phẩm !");
+        }
+        const updateProduct = await this.prisma.product.update({
+            where: {
+                productKey: key
+            },
+            data: {
+                ...request
+            }
+        });
+        return updateProduct;
+    }
     async getOneProduct(key) {
         try {
-            var getAllProduct = await this.prisma.product.findFirst({ where: { productKey: key } });
+            var getAllProduct = await this.prisma.product.findFirst({ where: { productKey: key, status: 1 } });
+            if (getAllProduct === null) {
+                throw new CustomException_1.InternalServerErrorException("Không tìm thấy sản phẩm !");
+            }
             return getAllProduct;
         }
         catch (error) {
+            if (error instanceof CustomException_1.DataNotFoundException) {
+                throw new CustomException_1.DataNotFoundException(error.message);
+            }
             throw new CustomException_1.InternalServerErrorException("Loi he thong !");
         }
     }
@@ -31,14 +67,7 @@ let ProductRepository = class ProductRepository {
         try {
             const creProduct = await this.prisma.product.create({
                 data: {
-                    name: request.name,
-                    description: request.description,
-                    expiryDay: request.expiryDay,
-                    guildToUsing: request.guildToUsing,
-                    imageURL: request.imageURL,
-                    price: request.price,
-                    quantity: request.quantity,
-                    weight: request.weight,
+                    ...request,
                     productKey: `PRO_${(0, uuid_1.v4)()}`,
                     status: 1
                 }

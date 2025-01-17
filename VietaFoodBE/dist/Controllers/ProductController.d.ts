@@ -7,4 +7,6 @@ export declare class ProductController {
     getAllProduct(): Promise<DataResponse<any>>;
     createProduct(request: ProductRequest): Promise<DataResponse<any>>;
     getOneProduct(key: string): Promise<DataResponse<any>>;
+    updateProduct(key: string, request: ProductRequest): Promise<DataResponse<any>>;
+    deleteProduct(key: string): Promise<DataResponse<any>>;
 }

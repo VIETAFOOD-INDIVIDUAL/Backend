@@ -2,9 +2,6 @@ import { Inject, Injectable } from "@nestjs/common";
 import { IProductService } from "../IService/IProductService";
 import { IProductRepository } from "src/Repositories/IRepository/IProductRepository";
 import { ProductResponse } from "src/Dtos/Products/Response/ProductRespose";
-import { InjectMapper } from "@automapper/nestjs";
-import { Mapper } from '@automapper/core';
-import { Prisma } from "@prisma/client";
 import { DataNotFoundException } from "src/Base/Utils/CustomException";
 import { InternalServerErrorException } from "src/Base/Utils/CustomException";
 import { ProductRequest } from "src/Dtos/Products/Request/ProductRequest";
@@ -13,10 +10,31 @@ import { ProductRequest } from "src/Dtos/Products/Request/ProductRequest";
 export class ProductService implements IProductService {
     constructor(
         @Inject('IProductRepository')
-        private readonly productRepo: IProductRepository,
-        @InjectMapper()
-        private readonly mapper: Mapper
-    ) { }
+        private readonly productRepo: IProductRepository
+    ) { 
+        this.productRepo = productRepo;
+    }
+
+    async deleteProduct(key: string): Promise<void> {
+        await this.productRepo.deleteProduct(key);
+    }
+
+    async updateProduct(key: string, request: ProductRequest): Promise<ProductResponse> {
+        try {
+            const existingProduct = await this.productRepo.getOneProduct(key);
+            if (!existingProduct) {
+                throw new DataNotFoundException("Không tìm thấy sản phẩm !");
+            }
+
+            const updatedProduct = await this.productRepo.updateProduct(key, request);
+            const response = {
+                ...updatedProduct
+            } as ProductResponse;
+            return response;
+        } catch (error) {
+            throw new InternalServerErrorException(error.message);
+        }
+    }
 
     async getOneProduct(key: string): Promise<ProductResponse> {
         const getOneProduct = await this.productRepo.getOneProduct(key);
@@ -26,7 +44,6 @@ export class ProductService implements IProductService {
         const response = {
             ...getOneProduct
         } as ProductResponse
-        //const response = this.mapper.mapArray(getAllProduct, Prisma.ModelName.Product, ProductResponse);
         return response;
     }
 
