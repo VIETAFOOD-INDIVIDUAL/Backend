@@ -13,6 +13,7 @@ export class OrderRepository implements IOrderRepository {
     constructor() {
         this.prisma = new PrismaClient();
     }
+
     async updateOrder(order: Order): Promise<void> {
         try {
             await this.prisma.order.update({
@@ -23,10 +24,11 @@ export class OrderRepository implements IOrderRepository {
                     ...order
                 }
             });
-        }catch(e) {
+        } catch (e) {
             throw new InternalServerErrorException("Lỗi hệ thống !")
         }
     }
+
     async createOrder(request: OrderRequest): Promise<Order> {
         try {
             const { orderDetails, customerInfo, couponCode, ...order } = request;
@@ -70,13 +72,13 @@ export class OrderRepository implements IOrderRepository {
         }
     }
 
-    async deleteOrder(orderKey: string): Promise<void> {
+    async updateStsOrder(orderKey: string, status: number): Promise<void> {
         try {
             const order = await this.prisma.order.findFirst({
                 where: {
                     orderKey: orderKey,
                     status: {
-                        not: OrderStatusEnum.Deleted
+                        not: status
                     }
                 }
             });
@@ -89,13 +91,26 @@ export class OrderRepository implements IOrderRepository {
                     orderKey: orderKey
                 },
                 data: {
-                    status: OrderStatusEnum.Deleted
+                    status: status
                 }
             });
         } catch (e) {
             if (e instanceof DataNotFoundException) {
                 throw new DataNotFoundException(e.message);
             }
+            throw new InternalServerErrorException("Lỗi hệ thống !")
+        }
+    }
+
+    async getOrderOfCustomer(customerInfoKey: string): Promise<Order[]> {
+        try {
+            const orders = await this.prisma.order.findMany({
+                where: {
+                    customerInfoKey: customerInfoKey
+                }
+            });
+            return orders;
+        } catch (e) {
             throw new InternalServerErrorException("Lỗi hệ thống !")
         }
     }

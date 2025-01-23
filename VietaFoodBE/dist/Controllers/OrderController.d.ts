@@ -6,6 +6,6 @@ export declare class OrderController {
     constructor(orderService: IOrderService);
     getAllOrder(): Promise<DataResponse<any>>;
     getOneOrder(orderKey: string): Promise<DataResponse<any>>;
-    deleteOrder(orderKey: string): Promise<DataResponse<any>>;
+    updateStsOrder(orderKey: string, status: number): Promise<DataResponse<any>>;
     createOrder(request: OrderRequest): Promise<DataResponse<any>>;
 }

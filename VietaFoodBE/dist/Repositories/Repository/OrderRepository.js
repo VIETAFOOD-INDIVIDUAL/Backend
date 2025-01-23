@@ -78,13 +78,13 @@ let OrderRepository = class OrderRepository {
             throw new CustomException_1.InternalServerErrorException("Lỗi hệ thống !");
         }
     }
-    async deleteOrder(orderKey) {
+    async updateStsOrder(orderKey, status) {
         try {
             const order = await this.prisma.order.findFirst({
                 where: {
                     orderKey: orderKey,
                     status: {
-                        not: OrderStatusEnum_1.OrderStatusEnum.Deleted
+                        not: status
                     }
                 }
             });
@@ -96,7 +96,7 @@ let OrderRepository = class OrderRepository {
                     orderKey: orderKey
                 },
                 data: {
-                    status: OrderStatusEnum_1.OrderStatusEnum.Deleted
+                    status: status
                 }
             });
         }
@@ -104,6 +104,19 @@ let OrderRepository = class OrderRepository {
             if (e instanceof CustomException_1.DataNotFoundException) {
                 throw new CustomException_1.DataNotFoundException(e.message);
             }
+            throw new CustomException_1.InternalServerErrorException("Lỗi hệ thống !");
+        }
+    }
+    async getOrderOfCustomer(customerInfoKey) {
+        try {
+            const orders = await this.prisma.order.findMany({
+                where: {
+                    customerInfoKey: customerInfoKey
+                }
+            });
+            return orders;
+        }
+        catch (e) {
             throw new CustomException_1.InternalServerErrorException("Lỗi hệ thống !");
         }
     }

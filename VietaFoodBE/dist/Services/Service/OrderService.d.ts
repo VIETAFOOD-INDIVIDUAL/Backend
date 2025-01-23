@@ -14,5 +14,5 @@ export declare class OrderService implements IOrderService {
     createOrder(request: OrderRequest): Promise<OrderResponse>;
     getOneOrder(orderKey: string): Promise<OrderResponse>;
     getAllOrder(): Promise<OrderResponse[]>;
-    deleteOrder(orderKey: string): Promise<void>;
+    updateStsOrder(orderKey: string, status: number): Promise<void>;
 }

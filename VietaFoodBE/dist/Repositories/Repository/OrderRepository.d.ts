@@ -8,5 +8,6 @@ export declare class OrderRepository implements IOrderRepository {
     createOrder(request: OrderRequest): Promise<Order>;
     getAllOrder(): Promise<Order[]>;
     getOneOrder(orderKey: string): Promise<Order>;
-    deleteOrder(orderKey: string): Promise<void>;
+    updateStsOrder(orderKey: string, status: number): Promise<void>;
+    getOrderOfCustomer(customerInfoKey: string): Promise<Order[]>;
 }

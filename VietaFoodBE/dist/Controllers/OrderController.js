@@ -46,9 +46,9 @@ let OrderController = class OrderController {
             throw new CustomException_1.InternalServerErrorException(e.message);
         }
     }
-    async deleteOrder(orderKey) {
+    async updateStsOrder(orderKey, status) {
         try {
-            await this.orderService.deleteOrder(orderKey);
+            await this.orderService.updateStsOrder(orderKey, status);
             return new DataReponse_1.DataResponse(200, "Xóa dữ liệu thành công", null);
         }
         catch (e) {
@@ -83,12 +83,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "getOneOrder", null);
 __decorate([
-    (0, common_1.Patch)(':orderKey'),
+    (0, common_1.Patch)(':orderKey/:status'),
     __param(0, (0, common_1.Param)('orderKey')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Number]),
     __metadata("design:returntype", Promise)
-], OrderController.prototype, "deleteOrder", null);
+], OrderController.prototype, "updateStsOrder", null);
 __decorate([
     (0, common_1.Post)('createOrder'),
     __param(0, (0, common_1.Body)()),

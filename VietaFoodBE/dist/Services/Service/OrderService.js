@@ -102,9 +102,9 @@ let OrderService = class OrderService {
             throw new common_1.InternalServerErrorException("Lỗi hệ thống !");
         }
     }
-    async deleteOrder(orderKey) {
+    async updateStsOrder(orderKey, status) {
         try {
-            await this.orderRepository.deleteOrder(orderKey);
+            await this.orderRepository.updateStsOrder(orderKey, status);
         }
         catch (e) {
             if (e instanceof CustomException_1.DataNotFoundException) {

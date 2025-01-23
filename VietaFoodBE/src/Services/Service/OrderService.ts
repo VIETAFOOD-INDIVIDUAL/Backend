@@ -27,6 +27,26 @@ export class OrderService implements IOrderService {
         this.customerRepository = customerRepository;
         this.orderDetailRepository = orderDetailRepository;
     }
+
+    async getOrderOfCustomer(customerInfoKey: string): Promise<OrderResponse[]> {
+        try {
+            const orders = await this.orderRepository.getOrderOfCustomer(customerInfoKey);
+            if (!orders) {
+                return null;
+            }
+            const response: OrderResponse[] = orders.map(order => {
+                return {
+                    ...order,
+                    customerInfor: null,
+                    orderDetails: [],
+                    couponResponse: null,
+                } as OrderResponse;
+            })
+            return response;
+        }catch(e) {
+            throw new InternalServerErrorException(e.message);
+        }
+    }
     async createOrder(request: OrderRequest): Promise<OrderResponse> {
         try {
             let totalPrice: number = 0;
@@ -104,9 +124,9 @@ export class OrderService implements IOrderService {
             throw new InternalServerErrorException("Lỗi hệ thống !");
         }
     }
-    async deleteOrder(orderKey: string): Promise<void> {
+    async updateStsOrder(orderKey: string, status: number): Promise<void> {
         try {
-            await this.orderRepository.deleteOrder(orderKey);
+            await this.orderRepository.updateStsOrder(orderKey, status);
         } catch (e) {
             if (e instanceof DataNotFoundException) {
                 throw new DataNotFoundException(e.message);

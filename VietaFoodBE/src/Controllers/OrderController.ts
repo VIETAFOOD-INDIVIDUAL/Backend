@@ -39,10 +39,10 @@ export class OrderController {
         }
     }
 
-    @Patch(':orderKey')
-    async deleteOrder(@Param('orderKey') orderKey: string): Promise<DataResponse<any>> {
+    @Patch(':orderKey/:status')
+    async updateStsOrder(@Param('orderKey') orderKey: string, status: number): Promise<DataResponse<any>> {
         try {
-            await this.orderService.deleteOrder(orderKey);
+            await this.orderService.updateStsOrder(orderKey, status);
             return new DataResponse(200, "Xóa dữ liệu thành công", null);
         } catch (e) {
             if (e instanceof DataNotFoundException) {

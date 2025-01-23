@@ -3,6 +3,6 @@ import { OrderResponse } from "src/Dtos/Orders/Response/OrderResponse";
 export interface IOrderService {
     getAllOrder(): Promise<OrderResponse[]>;
     getOneOrder(orderKey: string): Promise<OrderResponse>;
-    deleteOrder(orderKey: string): Promise<void>;
+    updateStsOrder(orderKey: string, status: number): Promise<void>;
     createOrder(request: OrderRequest): Promise<OrderResponse>;
 }
